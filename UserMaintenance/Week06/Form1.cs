@@ -17,22 +17,42 @@ namespace Week06
     public partial class Form1 : Form
     {
         BindingList<RateData> Rates = new BindingList<RateData>();
+        BindingList<string> Currencies = new BindingList<string>();
 
         public Form1()
         {
             InitializeComponent();
+            comboBox1.DataSource = Currencies;
+            GetCurrencies();
             RefreshData();
         }
 
-        public void GetExchangeRates()
+        public void GetCurrencies()
         {
             var mnbService = new MNBArfolyamServiceSoapClient();
 
             var request = new GetExchangeRatesRequestBody()
             {
-                currencyNames = "EUR",
-                startDate = "2020-01-01",
-                endDate = "2020-06-30"
+                currencyNames = comboBox1.SelectedItem.ToString(),
+                startDate = dateTimePicker1.Value.ToString(),
+                endDate = dateTimePicker2.Value.ToString()
+            };
+
+            var response = mnbService.GetExchangeRates(request);
+
+            var result = response.GetExchangeRatesResult;
+            //Innentől sajnos nem tudtam megoldani a feladatot.
+        }
+
+            public void GetExchangeRates()
+        {
+            var mnbService = new MNBArfolyamServiceSoapClient();
+
+            var request = new GetExchangeRatesRequestBody()
+            {
+                currencyNames = comboBox1.SelectedItem.ToString(),
+                startDate = dateTimePicker1.Value.ToString(),
+                endDate = dateTimePicker2.Value.ToString()
             };
 
             var response = mnbService.GetExchangeRates(request);
@@ -82,36 +102,52 @@ namespace Week06
 
         public void RefreshData()
         {
+            Rates.Clear();
             GetExchangeRates();
             ChartFeladat();
 
             dataGridView1.DataSource = Rates;
             chartRateData.DataSource = Rates;
         }
-        /*public void processXML()
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            var xml = new XmlDocument();
-            xml.LoadXml(result);
-
-            foreach (XmlElement element in xml.DocumentElement)
-            {
-                var rate = new RateData();
-                Rates.Add(rate);
-
-                // Dátum
-                rate.Date = DateTime.Parse(element.GetAttribute("date"));
-
-                // Valuta
-                var childElement = (XmlElement)element.ChildNodes[0];
-                rate.Currency = childElement.GetAttribute("curr");
-
-                // Érték
-                var unit = decimal.Parse(childElement.GetAttribute("unit"));
-                var value = decimal.Parse(childElement.InnerText);
-                if (unit != 0)
-                    rate.Value = value / unit;
-            }*/
+            RefreshData();
         }
+
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+        /*public void processXML()
+{
+var xml = new XmlDocument();
+xml.LoadXml(result);
+
+foreach (XmlElement element in xml.DocumentElement)
+{
+var rate = new RateData();
+Rates.Add(rate);
+
+// Dátum
+rate.Date = DateTime.Parse(element.GetAttribute("date"));
+
+// Valuta
+var childElement = (XmlElement)element.ChildNodes[0];
+rate.Currency = childElement.GetAttribute("curr");
+
+// Érték
+var unit = decimal.Parse(childElement.GetAttribute("unit"));
+var value = decimal.Parse(childElement.InnerText);
+if (unit != 0)
+rate.Value = value / unit;
+}*/
+    }
         
 
     }
