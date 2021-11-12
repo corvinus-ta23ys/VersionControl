@@ -11,7 +11,7 @@ namespace Week08.Entities
     {
         public Toy CreateNew()
         {
-            return new Ball();
+            return new Car();
         }
     }
 }
