@@ -94,5 +94,36 @@ namespace Week08
                 return;
             button.BackColor = colorPicker.Color;
         }
+
+        private void btnPresent_Click(object sender, EventArgs e)
+        {
+            Factory = new PresentFactory
+            {
+                Color1 = btnPresentColor1.BackColor,
+                Color2 = btnPresentColor2.BackColor
+            };
+        }
+
+        private void btnPresentColor1_Click(object sender, EventArgs e)
+        {
+            var button = (Button)sender;
+            var colorPicker = new ColorDialog();
+
+            colorPicker.Color = button.BackColor;
+            if (colorPicker.ShowDialog() != DialogResult.OK)
+                return;
+            button.BackColor = colorPicker.Color;
+        }
+
+        private void btnPresentColor2_Click(object sender, EventArgs e)
+        {
+            var button = (Button)sender;
+            var colorPicker = new ColorDialog();
+
+            colorPicker.Color = button.BackColor;
+            if (colorPicker.ShowDialog() != DialogResult.OK)
+                return;
+            button.BackColor = colorPicker.Color;
+        }
     }
 }
