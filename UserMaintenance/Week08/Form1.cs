@@ -27,6 +27,7 @@ namespace Week08
                 DisplayNext();
 
             }
+        }
         public Form1()
         {
             InitializeComponent();
