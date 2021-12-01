@@ -18,6 +18,9 @@ namespace Week09
         List<BirthProbability> BirthProbabilities = new List<BirthProbability>();
         List<DeathProbability> DeathProbabilities = new List<DeathProbability>();
 
+        Random rng = new Random(1234);
+
+
         public Form1()
         {
             InitializeComponent();
@@ -25,6 +28,8 @@ namespace Week09
             Population = GetPopulation(@"C:\Temp\nép.csv");
             BirthProbabilities = GetBirthProbabilities(@"C:\Temp\születés.csv");
             DeathProbabilities = GetDeathProbabilities(@"C:\Temp\halál.csv");
+
+            dataGridView1.DataSource = DeathProbabilities.ToList();
         }
 
         public List<Person> GetPopulation(string csvpath)
@@ -61,7 +66,7 @@ namespace Week09
                     {
                         kor = int.Parse(line[0]),
                         darabGyermek = int.Parse(line[1]),
-                        probBirth = double.Parse(line[3])
+                        probBirth = double.Parse(line[2])
                     });
                 }
             }
@@ -80,9 +85,9 @@ namespace Week09
                     var line = sr.ReadLine().Split(';');
                     deathprob.Add(new DeathProbability()
                     {
-                        nem = (Gender)Enum.Parse(typeof(Gender), line[1]),
+                        nem = (Gender)Enum.Parse(typeof(Gender), line[0]),
                         kor = int.Parse(line[1]),
-                        probDeath = double.Parse(line[3])
+                        probDeath = double.Parse(line[2])
                     });
                 }
             }
