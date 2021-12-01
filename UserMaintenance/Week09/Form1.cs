@@ -29,7 +29,22 @@ namespace Week09
             BirthProbabilities = GetBirthProbabilities(@"C:\Temp\születés.csv");
             DeathProbabilities = GetDeathProbabilities(@"C:\Temp\halál.csv");
 
-            dataGridView1.DataSource = DeathProbabilities.ToList();
+            for (int year = 2005; year <= 2024; year++)
+            {
+                for (int i = 0; i < Population.Count; i++)
+                {
+                    // Ide jön a szimulációs lépés
+                }
+
+                int nbrOfMales = (from x in Population
+                                  where x.Gender == Gender.Male && x.IsAlive
+                                  select x).Count();
+                int nbrOfFemales = (from x in Population
+                                    where x.Gender == Gender.Female && x.IsAlive
+                                    select x).Count();
+                Console.WriteLine(
+                    string.Format("Év:{0} Fiúk:{1} Lányok:{2}", year, nbrOfMales, nbrOfFemales));
+            }
         }
 
         public List<Person> GetPopulation(string csvpath)
@@ -93,6 +108,42 @@ namespace Week09
             }
 
             return deathprob;
+        }
+
+        private void SimStep(int year, Person person)
+        {
+            //Ha halott akkor kihagyjuk, ugrunk a ciklus következő lépésére
+            if (!person.IsAlive) return;
+
+            // Letároljuk az életkort, hogy ne kelljen mindenhol újraszámolni
+            byte age = (byte)(year - person.BirthYear);
+
+            // Halál kezelése
+            // Halálozási valószínűség kikeresése
+            double pDeath = (from x in DeathProbabilities
+                             where x.nem == person.Gender && x.kor == age
+                             select x.probDeath).FirstOrDefault();
+            // Meghal a személy?
+            if (rng.NextDouble() <= pDeath)
+                person.IsAlive = false;
+
+            //Születés kezelése - csak az élő nők szülnek
+            if (person.IsAlive && person.Gender == Gender.Female)
+            {
+                //Szülési valószínűség kikeresése
+                double pBirth = (from x in BirthProbabilities
+                                 where x.kor == age
+                                 select x.probBirth).FirstOrDefault();
+                //Születik gyermek?
+                if (rng.NextDouble() <= pBirth)
+                {
+                    Person újszülött = new Person();
+                    újszülött.BirthYear = year;
+                    újszülött.NbrOfChildren = 0;
+                    újszülött.Gender = (Gender)(rng.Next(1, 3));
+                    Population.Add(újszülött);
+                }
+            }
         }
     }
 }
